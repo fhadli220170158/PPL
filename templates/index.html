@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualisasi ARAT</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f8fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1565C0;
+            margin-bottom: 25px;
+        }
+
+        button {
+            display: block;
+            margin: 0 auto 25px auto;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(90deg, #1976D2, #42A5F5);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+
+        .bar-box {
+            margin-bottom: 18px;
+        }
+
+        .label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .bar-container {
+            width: 100%;
+            background: #e3eefc;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 26px;
+            width: 0%;
+            border-radius: 20px;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            line-height: 26px;
+            transition: width 0.6s ease;
+        }
+
+        /* Warna bar (nuansa biru tetap dominan) */
+        .meja { background: linear-gradient(90deg, #1E88E5, #64B5F6); }
+        .mulut { background: linear-gradient(90deg, #1976D2, #42A5F5); }
+        .kepala_depan { background: linear-gradient(90deg, #1565C0, #5C9DED); }
+        .kepala_belakang { background: linear-gradient(90deg, #0D47A1, #4F83CC); }
+
+        .total {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px dashed #bbdefb;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0D47A1;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h2>Visualisasi Skor ARAT</h2>
+
+    <button onclick="predict()">Prediksi Skor</button>
+
+    <div class="bar-box">
+        <div class="label">Meja</div>
+        <div class="bar-container">
+            <div id="meja" class="bar meja">0</div>
+        </div>
+    </div>
+
+    <div class="bar-box">
+        <div class="label">Mulut</div>
+        <div class="bar-container">
+            <div id="mulut" class="bar mulut">0</div>
+        </div>
+    </div>
+
+    <div class="bar-box">
+        <div class="label">Kepala Depan</div>
+        <div class="bar-container">
+            <div id="kepala_depan" class="bar kepala_depan">0</div>
+        </div>
+    </div>
+
+    <div class="bar-box">
+        <div class="label">Kepala Belakang</div>
+        <div class="bar-container">
+            <div id="kepala_belakang" class="bar kepala_belakang">0</div>
+        </div>
+    </div>
+
+    <div class="total">
+        Total Skor ARAT: <span id="total">0</span> / 12
+    </div>
+
+</div>
+
+<script>
+function setBar(id, score) {
+    const percent = (score / 3) * 100;
+    const bar = document.getElementById(id);
+    bar.style.width = percent + "%";
+    bar.innerText = score;
+}
+
+function predict() {
+    fetch("/predict", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+        setBar("meja", data.scores.meja);
+        setBar("mulut", data.scores.mulut);
+        setBar("kepala_depan", data.scores.kepala_depan);
+        setBar("kepala_belakang", data.scores.kepala_belakang);
+        document.getElementById("total").innerText = data.total;
+    });
+}
+</script>
+
+</body>
+</html>
